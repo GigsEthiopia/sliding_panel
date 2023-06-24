@@ -6,7 +6,7 @@ part of sliding_panel;
 /// NOTE: A beta feature. Although simple, this is tested roughly.
 /// Some features may not work in all cases. Feedback needed.
 class PanelScrollData {
-  ScrollController _scrollController;
+  ScrollController? _scrollController;
 
   PanelScrollData._(this._scrollController);
 
@@ -15,7 +15,7 @@ class PanelScrollData {
   /// Get the [ScrollController] used by the [SlidingPanel].
   ///
   /// This is exactly the same controller used in the [PanelContent].
-  ScrollController get scrollController => _scrollController;
+  ScrollController get scrollController => _scrollController!;
 
   /// Whether the scrollable content is at its starting position.
   bool get atStart {

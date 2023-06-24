@@ -2,14 +2,14 @@ part of sliding_panel;
 
 class _SlidingPanelModalRoute<T> extends PopupRoute<T> {
   _SlidingPanelModalRoute(
-      {@required this.panelRouteBuilder, @required this.duration});
+      {required this.panelRouteBuilder, required this.duration});
 
   final SlidingPanel Function(_SlidingPanelModalRoute panelModalRoute)
       panelRouteBuilder;
   final Duration duration;
 
   @override
-  Color get barrierColor => null;
+  Color? get barrierColor => null;
 
   @override
   bool get barrierDismissible => false;
@@ -76,9 +76,9 @@ class _SlidingPanelModalRoute<T> extends PopupRoute<T> {
 /// [PanelAutoSizing.headerSizeIsClosed] used), [PanelState.closed] won't pop
 /// the route. At that time, currentHeight=0.0 ([PanelState.dismissed])
 /// pops the route.
-Future<T> showModalSlidingPanel<T>(
-    {@required BuildContext context,
-    @required SlidingPanel Function(BuildContext) panel}) {
+Future showModalSlidingPanel<T>(
+    {required BuildContext context,
+    required SlidingPanel Function(BuildContext) panel}) {
   if (panel != null) {
     SlidingPanel _panel = panel(context);
 
@@ -88,7 +88,7 @@ Future<T> showModalSlidingPanel<T>(
         panelRouteBuilder: (route) {
           return SlidingPanel._modal(
             route,
-            key: _panel.key,
+            key: _panel.key!,
             initialState: _panel.initialState,
             content: PanelContent(
                 panelContent: _panel.content.panelContent,

@@ -2,13 +2,13 @@ part of sliding_panel;
 
 class _SlidingPanelState extends State<SlidingPanel>
     with TickerProviderStateMixin {
-  _PanelScrollController _scrollController;
-  _PanelMetadata _metadata;
+  _PanelScrollController? _scrollController;
+  _PanelMetadata? _metadata;
 
-  PanelController _controller;
+  PanelController? _controller;
 
-  PanelState _oldPanelState;
-  PanelState _currentPanelState;
+  PanelState? _oldPanelState;
+  PanelState? _currentPanelState;
 
   GlobalKey _keyHeader = GlobalKey();
 
@@ -24,7 +24,7 @@ class _SlidingPanelState extends State<SlidingPanel>
 
   GlobalKey _keyContent = GlobalKey();
 
-  Orientation _screenOrientation;
+  Orientation? _screenOrientation;
 
   Color _appBarIconsColor = Colors.white;
   List<Widget> _panelContentItems = [];
@@ -70,7 +70,7 @@ class _SlidingPanelState extends State<SlidingPanel>
   void initState() {
     super.initState();
 
-    _panelContentItems = widget.content.panelContent;
+    _panelContentItems = widget.content.panelContent!;
 
     _metadata = _PanelMetadata(
       closedHeight: size.closedHeight,
@@ -82,7 +82,7 @@ class _SlidingPanelState extends State<SlidingPanel>
       isModal: isModal,
       animatedAppearing: widget.animatedAppearing,
       snappingTriggerPercentage: widget.snappingTriggerPercentage,
-      dragMultiplier: widget.dragMultiplier._safeClamp(1.0, 5.0),
+      dragMultiplier: widget.dragMultiplier._safeClamp(1.0, 5.0) as double,
       safeAreaConfig: widget.safeAreaConfig,
       initialPanelState: widget.initialState,
       listener: _panelHeightChangedListener,
@@ -95,12 +95,12 @@ class _SlidingPanelState extends State<SlidingPanel>
 
     _controller = PanelController().._control(this);
 
-    if (widget.panelController == null) _controller._printError();
+    if (widget.panelController == null) _controller!._printError();
 
     widget?.panelController?._control(this);
   }
 
-  void rebuild({VoidCallback then}) {
+  void rebuild({VoidCallback? then}) {
     // Refresh first
     setState(() {});
 
@@ -111,7 +111,7 @@ class _SlidingPanelState extends State<SlidingPanel>
         _calculateHeights();
       }
 
-      _controller._updateDurations();
+      _controller!._updateDurations();
       widget?.panelController?._updateDurations();
 
       SchedulerBinding.instance.addPostFrameCallback(
@@ -124,15 +124,15 @@ class _SlidingPanelState extends State<SlidingPanel>
   }
 
   void _calculateHeaderHeight() {
-    final RenderBox boxHeader =
-        _keyHeader?.currentContext?.findRenderObject() ?? null;
+    final RenderBox? boxHeader =
+        _keyHeader.currentContext?.findRenderObject() as RenderBox ?? null;
 
     // calculate header height
-    if ((boxHeader?.size?.height ?? null) != null) {
+    if ((boxHeader?.size.height ?? null) != null) {
       // header provided and size calculated.
       // so, this height has to be added to all other heights.
 
-      final headerHeight = boxHeader.size.height;
+      final headerHeight = boxHeader!.size.height;
 
       setState(() {
         _toShowHeader = true;
@@ -149,15 +149,15 @@ class _SlidingPanelState extends State<SlidingPanel>
   }
 
   void _calculateFooterHeight() {
-    final RenderBox boxFooter =
-        _keyFooter?.currentContext?.findRenderObject() ?? null;
+    final RenderBox? boxFooter =
+        _keyFooter.currentContext?.findRenderObject() as RenderBox ?? null;
 
     // calculate footer height
-    if ((boxFooter?.size?.height ?? null) != null) {
+    if ((boxFooter?.size.height ?? null) != null) {
       // footer provided and size calculated.
       // so, this height has to be added to all other heights.
 
-      final footerHeight = boxFooter.size.height;
+      final footerHeight = boxFooter!.size.height;
 
       setState(() {
         _toShowFooter = true;
@@ -176,21 +176,21 @@ class _SlidingPanelState extends State<SlidingPanel>
     // take temporary variables.
     double _additionalHeight = 0.0;
 
-    double _closedHeightTemp = _metadata.closedHeight;
+    double _closedHeightTemp = _metadata!.closedHeight;
     bool _closedHeightChanged = false;
 
-    double _collapsedHeightTemp = _metadata.collapsedHeight;
+    double _collapsedHeightTemp = _metadata!.collapsedHeight;
     bool _collapsedHeightChanged = false;
 
-    double _expandedHeightTemp = _metadata.expandedHeight;
+    double _expandedHeightTemp = _metadata!.expandedHeight;
     bool _expandedHeightChanged = false;
 
     // find all render boxes
-    final RenderBox boxCollapsed =
-        _keyCollapsed?.currentContext?.findRenderObject() ?? null;
+    final RenderBox? boxCollapsed =
+        _keyCollapsed?.currentContext?.findRenderObject() as RenderBox ?? null;
 
-    final RenderBox boxContent =
-        _keyContent?.currentContext?.findRenderObject() ?? null;
+    final RenderBox? boxContent =
+        _keyContent?.currentContext?.findRenderObject() as RenderBox  ?? null;
 
     _calculateHeaderHeight();
     _calculateFooterHeight();
@@ -209,15 +209,15 @@ class _SlidingPanelState extends State<SlidingPanel>
     }
 
     // calculate collapsed widget height.
-    if ((!_metadata.isTwoStatePanel) && (autoSizing.autoSizeCollapsed)) {
+    if ((!_metadata!.isTwoStatePanel) && (autoSizing.autoSizeCollapsed)) {
       // not for two-state panels, as they don't have this widget.
 
       if ((boxCollapsed?.size?.height ?? null) != null) {
         // collapsedWidget provided and size calculated.
 
-        final colHeight = boxCollapsed.size.height;
+        final colHeight = boxCollapsed!.size.height;
 
-        if (colHeight < _metadata.constrainedHeight) {
+        if (colHeight < _metadata!.constrainedHeight!) {
           // if it is less than screen's height.
           setState(() {
             if (_toShowHeader) {
@@ -242,10 +242,10 @@ class _SlidingPanelState extends State<SlidingPanel>
         (autoSizing.autoSizeExpanded)) {
       // panelContent provided and size calculated.
 
-      var expHeight = boxContent.size.height;
+      var expHeight = boxContent!.size.height;
 
       var mediaQueryPadding = MediaQuery.of(context).padding.vertical;
-      if (_metadata.safeAreaConfig.bodyHasSlivers)
+      if (_metadata!.safeAreaConfig.bodyHasSlivers)
         expHeight -= mediaQueryPadding;
 
       setState(() {
@@ -260,7 +260,7 @@ class _SlidingPanelState extends State<SlidingPanel>
             // and maximum of (it's actual height + header height) and
             // (collapsedHeight (which also includes header height))
 
-            _expandedHeightTemp = min(_metadata.constrainedHeight,
+            _expandedHeightTemp = min(_metadata!.constrainedHeight!,
                 max(expHeight + _additionalHeight, _collapsedHeightTemp));
           } else {
             // set expanded to collapsed.
@@ -269,7 +269,7 @@ class _SlidingPanelState extends State<SlidingPanel>
         } else {
           // select minimum of screen height / boxHeight including header & footer.
           _expandedHeightTemp =
-              min(expHeight + _additionalHeight, _metadata.constrainedHeight);
+              min(expHeight + _additionalHeight, _metadata!.constrainedHeight!);
         }
         _expandedHeightChanged = true;
       });
@@ -280,37 +280,37 @@ class _SlidingPanelState extends State<SlidingPanel>
         if (_toShowHeader) {
           // Header is to be shown. Calculated _closedHeight would be in pixels
           // So, convert it into percentage.
-          _metadata.closedHeight =
-              _closedHeightTemp / _metadata.constrainedHeight;
+          _metadata!.closedHeight =
+              _closedHeightTemp / _metadata!.constrainedHeight!;
         } else {
           // Don't show header. At this time, the _closedHeight would be in
           // percentage already. So, assign directly.
-          _metadata.closedHeight = _closedHeightTemp;
+          _metadata!.closedHeight = _closedHeightTemp;
         }
       }
 
       if (_collapsedHeightChanged) {
-        _metadata.collapsedHeight =
-            _collapsedHeightTemp / _metadata.constrainedHeight;
+        _metadata!.collapsedHeight =
+            _collapsedHeightTemp / _metadata!.constrainedHeight!;
       }
 
       if (_expandedHeightChanged) {
-        if (_expandedHeightTemp > _metadata.constrainedHeight) {
-          _expandedHeightTemp = _metadata.constrainedHeight;
+        if (_expandedHeightTemp > _metadata!.constrainedHeight!) {
+          _expandedHeightTemp = _metadata!.constrainedHeight!;
         }
 
         if ((autoSizing.useMinExpanded) &&
-            (_metadata.providedExpandedHeight != null) &&
-            (_metadata.providedExpandedHeight > 0.0 &&
-                _metadata.providedExpandedHeight <= 1.0)) {
+            (_metadata!.providedExpandedHeight != null) &&
+            (_metadata!.providedExpandedHeight > 0.0 &&
+                _metadata!.providedExpandedHeight <= 1.0)) {
           double _height = min(
-              (_expandedHeightTemp / _metadata.constrainedHeight),
-              _metadata.providedExpandedHeight);
-          _metadata.expandedHeight = _height.isFinite ? _height : 0.0;
+              (_expandedHeightTemp / _metadata!.constrainedHeight!),
+              _metadata!.providedExpandedHeight);
+          _metadata!.expandedHeight = _height.isFinite ? _height : 0.0;
         } else {
-          double _height = _expandedHeightTemp / _metadata.constrainedHeight;
+          double _height = _expandedHeightTemp / _metadata!.constrainedHeight!;
 
-          _metadata.expandedHeight = _height.isFinite ? _height : 0.0;
+          _metadata!.expandedHeight = _height.isFinite ? _height : 0.0;
         }
         _paddingApplyNeeded = true;
       }
@@ -320,30 +320,30 @@ class _SlidingPanelState extends State<SlidingPanel>
   void _panelHeightChangedListener() {
     if (mounted) setState(() {});
 
-    widget?.onPanelSlide?.call(_metadata.currentHeight);
+    widget?.onPanelSlide?.call(_metadata!.currentHeight);
 
-    _currentPanelState = _controller.currentState;
+    _currentPanelState = _controller!.currentState;
 
     if (_currentPanelState != _oldPanelState) {
       _oldPanelState = _currentPanelState;
 
       if (widget.onPanelStateChanged != null) {
-        widget.onPanelStateChanged(_currentPanelState);
+        widget.onPanelStateChanged!(_currentPanelState!);
       }
 
       if ((_currentPanelState == PanelState.closed) &&
           (widget.panelClosedOptions.detachDragging)) {
         if (widget.panelClosedOptions.resetScrolling)
-          _scrollController.animateTo(0.0,
+          _scrollController!.animateTo(0.0,
               duration: widget.duration, curve: widget.curve);
 
         if (_shouldNotifyOnClose) {
           if (widget.panelClosedOptions.sendResult != null)
-            _controller.sendResult(
+            _controller!.sendResult(
                 result: widget.panelClosedOptions.sendResult);
 
           if (widget.panelClosedOptions.throwResult != null)
-            _controller.throwResult(
+            _controller!.throwResult(
                 result: widget.panelClosedOptions.throwResult);
         }
         _shouldNotifyOnClose = true;
@@ -352,7 +352,7 @@ class _SlidingPanelState extends State<SlidingPanel>
 
     if (isModal) {
       // showModalSlidingPanel()
-      if (_metadata.currentHeight == 0.0) {
+      if (_metadata!.currentHeight == 0.0) {
         // panel really hidden (dismissed, or closed with 0.0)
         if (_safeToPop && Navigator.of(context).canPop()) {
           // canPop() used to ensure that the root route doesn't get popped.
@@ -377,15 +377,15 @@ class _SlidingPanelState extends State<SlidingPanel>
 
         // If footer top margin is given, add it to bottom padding
         if ((footer?.decoration?.margin?.top ?? 0) > 0.0) {
-          additionalBottomPadding += footer.decoration.margin.top;
+          additionalBottomPadding += footer.decoration!.margin!.top;
         }
 
         // If footer top margin is given, add it to bottom padding
         if ((footer?.decoration?.margin?.bottom ?? 0) > 0.0) {
-          additionalBottomPadding += footer.decoration.margin.bottom;
+          additionalBottomPadding += footer.decoration!.margin!.bottom;
         }
 
-        if (_metadata.safeAreaConfig != null) {
+        if (_metadata!.safeAreaConfig != null) {
           // Additional padding required.
           double additionalTopPadding = 0.0;
           double additionalLeftPadding = 0.0;
@@ -402,12 +402,12 @@ class _SlidingPanelState extends State<SlidingPanel>
 
             // If left margin is given, add it to right padding
             if ((decoration?.margin?.left ?? 0) > 0.0) {
-              additionalRightPadding += decoration.margin.left;
+              additionalRightPadding += decoration.margin!.left;
             }
 
             // If right margin is given, add it to left padding
             if ((decoration?.margin?.right ?? 0) > 0.0) {
-              additionalLeftPadding += decoration.margin.right;
+              additionalLeftPadding += decoration.margin!.right;
             }
           } else
             leftPadding = rightPadding = 0.0;
@@ -416,11 +416,11 @@ class _SlidingPanelState extends State<SlidingPanel>
             double tempTopPadding = MediaQuery.of(context).padding.top;
 
             // If AVAILABLE height is more than screen height, just apply padding
-            if (_metadata.totalHeight >= _metadata.constrainedHeight) {
+            if (_metadata!.totalHeight >= _metadata!.constrainedHeight!) {
               topPadding = MediaQuery.of(context).padding.top;
             } else {
-              if ((_metadata.constrainedHeight - tempTopPadding) >
-                  _metadata.totalHeight) {
+              if ((_metadata!.constrainedHeight! - tempTopPadding) >
+                  _metadata!.totalHeight) {
                 // If removing padding space from screen's height would exceed
                 // available height, apply no padding
                 topPadding = 0.0;
@@ -430,8 +430,8 @@ class _SlidingPanelState extends State<SlidingPanel>
                 // min(actual padding, available height - (screen's height - actual padding))
                 topPadding = min(
                     tempTopPadding,
-                    (_metadata.totalHeight -
-                            (_metadata.constrainedHeight - tempTopPadding))
+                    (_metadata!.totalHeight -
+                            (_metadata!.constrainedHeight! - tempTopPadding))
                         .abs());
               }
             }
@@ -439,20 +439,20 @@ class _SlidingPanelState extends State<SlidingPanel>
             if (isModal) {
               // This calculation is needed here. Because, if modal panel needs bottom padding,
               // top padding would be less to avoid intrusions.
-              if ((_metadata.totalHeight + tempTopPadding + bottomPadding) >=
-                  (_metadata.constrainedHeight)) {
+              if ((_metadata!.totalHeight + tempTopPadding + bottomPadding) >=
+                  (_metadata!.constrainedHeight!)) {
                 topPadding += bottomPadding;
               }
             }
 
             // If bottom margin is given, add it to top padding
             if ((decoration?.margin?.bottom ?? 0) > 0.0) {
-              additionalTopPadding += decoration.margin.bottom;
+              additionalTopPadding += decoration.margin!.bottom;
             }
 
             // If top margin is given, add it to top padding
             if ((decoration?.margin?.top ?? 0) > 0.0) {
-              additionalTopPadding += decoration.margin.top;
+              additionalTopPadding += decoration.margin!.top;
             }
           } else
             topPadding = 0.0;
@@ -472,7 +472,7 @@ class _SlidingPanelState extends State<SlidingPanel>
     super.didChangeDependencies();
 
     _appBarIconsColor =
-        (header.decoration.backgroundColor ?? Theme.of(context).canvasColor)
+        (header.decoration!.backgroundColor ?? Theme.of(context).canvasColor)
                     .computeLuminance() >
                 0.5
             ? Colors.black
@@ -485,9 +485,9 @@ class _SlidingPanelState extends State<SlidingPanel>
 
       _screenOrientation = queryData.orientation;
 
-      double previousClosedHeight = _controller.sizeData.closedHeight;
-      double previousExpandedHeight = _controller.sizeData.expandedHeight;
-      double previousPanelHeight = _controller.currentPosition;
+      double previousClosedHeight = _controller!.sizeData.closedHeight;
+      double previousExpandedHeight = _controller!.sizeData.expandedHeight;
+      double previousPanelHeight = _controller!.currentPosition;
 
       if (autoSizing.headerSizeIsClosed ||
           autoSizing.autoSizeCollapsed ||
@@ -496,17 +496,17 @@ class _SlidingPanelState extends State<SlidingPanel>
           _calculateHeights();
 
           // update durations again
-          _controller._updateDurations();
+          _controller!._updateDurations();
           widget?.panelController?._updateDurations();
 
           if (_isInitialBuild) {
             _isInitialBuild = false;
 
-            _metadata._setInitialStateAgain();
+            _metadata!._setInitialStateAgain();
             // set initial state, initially...
           } else {
-            double nextClosedHeight = _controller.sizeData.closedHeight;
-            double nextExpandedHeight = _controller.sizeData.expandedHeight;
+            double nextClosedHeight = _controller!.sizeData.closedHeight;
+            double nextExpandedHeight = _controller!.sizeData.expandedHeight;
 
             double nextPanelHeight = nextClosedHeight +
                 ((nextExpandedHeight - nextClosedHeight) /
@@ -514,22 +514,22 @@ class _SlidingPanelState extends State<SlidingPanel>
                     (previousPanelHeight - previousClosedHeight);
 
             // remove original listener
-            _metadata._removeHeightListener(_panelHeightChangedListener);
+            _metadata!._removeHeightListener(_panelHeightChangedListener);
 
             // add temporary listener
-            _metadata._addHeightListener(_tempListener);
+            _metadata!._addHeightListener(_tempListener);
 
             await _setPanelPosition(this,
                 to: nextPanelHeight,
-                duration: _controller._getDuration(
+                duration: _controller!._getDuration(
                     from: nextClosedHeight, to: nextExpandedHeight),
                 shouldClamp: false);
 
             // remove temporary listener
-            _metadata._removeHeightListener(_tempListener);
+            _metadata!._removeHeightListener(_tempListener);
 
             // add original listener
-            _metadata._addHeightListener(_panelHeightChangedListener);
+            _metadata!._addHeightListener(_panelHeightChangedListener);
           }
 
           _applyPaddings();
@@ -540,17 +540,17 @@ class _SlidingPanelState extends State<SlidingPanel>
           _calculateFooterHeight();
 
           // update durations again
-          _controller._updateDurations();
+          _controller!._updateDurations();
           widget?.panelController?._updateDurations();
 
           if (_isInitialBuild) {
             _isInitialBuild = false;
 
-            _metadata._setInitialStateAgain();
+            _metadata!._setInitialStateAgain();
             // set initial state, initially...
           } else {
-            double nextClosedHeight = _controller.sizeData.closedHeight;
-            double nextExpandedHeight = _controller.sizeData.expandedHeight;
+            double nextClosedHeight = _controller!.sizeData.closedHeight;
+            double nextExpandedHeight = _controller!.sizeData.expandedHeight;
 
             double nextPanelHeight = nextClosedHeight +
                 ((nextExpandedHeight - nextClosedHeight) /
@@ -558,22 +558,22 @@ class _SlidingPanelState extends State<SlidingPanel>
                     (previousPanelHeight - previousClosedHeight);
 
             // remove original listener
-            _metadata._removeHeightListener(_panelHeightChangedListener);
+            _metadata!._removeHeightListener(_panelHeightChangedListener);
 
             // add temporary listener
-            _metadata._addHeightListener(_tempListener);
+            _metadata!._addHeightListener(_tempListener);
 
             await _setPanelPosition(this,
                 to: nextPanelHeight,
-                duration: _controller._getDuration(
+                duration: _controller!._getDuration(
                     from: nextClosedHeight, to: nextExpandedHeight),
                 shouldClamp: false);
 
             // remove temporary listener
-            _metadata._removeHeightListener(_tempListener);
+            _metadata!._removeHeightListener(_tempListener);
 
             // add original listener
-            _metadata._addHeightListener(_panelHeightChangedListener);
+            _metadata!._addHeightListener(_panelHeightChangedListener);
           }
 
           _applyPaddings();
@@ -598,65 +598,65 @@ class _SlidingPanelState extends State<SlidingPanel>
               // the wait will never be over.
               switch (decidedState) {
                 case InitialPanelState.dismissed:
-                  _controller.expand();
+                  _controller!.expand();
                   break;
                 case InitialPanelState.closed:
-                  _controller.close();
+                  _controller!.close();
                   break;
                 case InitialPanelState.collapsed:
-                  _controller.collapse();
+                  _controller!.collapse();
                   break;
                 case InitialPanelState.expanded:
-                  _controller.expand();
+                  _controller!.expand();
                   break;
               }
 
-              widget._panelModalRoute.popped.then((_) {
+              widget._panelModalRoute!.popped.then((_) {
                 _safeToPop = false;
                 // popped by parent, dismiss the panel
                 // this comes into picure when Navigator.of(context).pop(something)
                 // is called.
-                if (mounted) _controller.dismiss();
+                if (mounted) _controller!.dismiss();
               });
             }
           });
         } else {
-          if (_metadata.animatedAppearing) {
+          if (_metadata!.animatedAppearing) {
             // animate the appearing of the panel
             // we need to prevent height listener from listening, otherwise
             // it would throw state changes to its listeners...
             SchedulerBinding.instance.addPostFrameCallback((_) async {
               // remove original listener
-              _metadata._removeHeightListener(_panelHeightChangedListener);
+              _metadata!._removeHeightListener(_panelHeightChangedListener);
 
               // add temporary listener
-              _metadata._addHeightListener(_tempListener);
+              _metadata!._addHeightListener(_tempListener);
 
               // animate
               // animate the panel, wait for it
               switch (widget.initialState) {
                 case InitialPanelState.dismissed:
-                  await _controller.dismiss();
+                  await _controller!.dismiss();
                   break;
                 case InitialPanelState.closed:
-                  await _controller.close();
+                  await _controller!.close();
                   break;
                 case InitialPanelState.collapsed:
-                  if (_metadata.isTwoStatePanel)
-                    await _controller.expand();
+                  if (_metadata!.isTwoStatePanel)
+                    await _controller!.expand();
                   else
-                    await _controller.collapse();
+                    await _controller!.collapse();
                   break;
                 case InitialPanelState.expanded:
-                  await _controller.expand();
+                  await _controller!.expand();
                   break;
               }
 
               // remove temporary listener
-              _metadata._removeHeightListener(_tempListener);
+              _metadata!._removeHeightListener(_tempListener);
 
               // back to original
-              _metadata._addHeightListener(_panelHeightChangedListener);
+              _metadata!._addHeightListener(_panelHeightChangedListener);
             });
           }
         }
@@ -669,52 +669,52 @@ class _SlidingPanelState extends State<SlidingPanel>
     super.didUpdateWidget(oldWidget);
 
     _appBarIconsColor =
-        (header.decoration.backgroundColor ?? Theme.of(context).canvasColor)
+        (header.decoration!.backgroundColor ?? Theme.of(context).canvasColor)
                     .computeLuminance() >
                 0.5
             ? Colors.black
             : Colors.white;
 
-    _panelContentItems = widget.content.panelContent;
+    _panelContentItems = widget.content.panelContent!;
 
     if (autoSizing.useMinExpanded &&
-        _metadata.providedExpandedHeight != size.expandedHeight) {
-      _metadata.providedExpandedHeight = size.expandedHeight;
+        _metadata!.providedExpandedHeight != size.expandedHeight) {
+      _metadata!.providedExpandedHeight = size.expandedHeight;
       rebuild();
     }
 
     if (oldWidget.safeAreaConfig != widget.safeAreaConfig) {
-      _metadata.safeAreaConfig = widget.safeAreaConfig;
+      _metadata!.safeAreaConfig = widget.safeAreaConfig;
       _applyPaddings();
     }
 
     if (oldWidget.snapping != widget.snapping) {
-      _metadata.snapping = widget.snapping;
+      _metadata!.snapping = widget.snapping;
     }
 
     if (oldWidget.isDraggable != widget.isDraggable) {
-      _metadata.isDraggable = widget.isDraggable;
+      _metadata!.isDraggable = widget.isDraggable;
     }
 
     if (oldWidget.snappingTriggerPercentage !=
         widget.snappingTriggerPercentage) {
-      _metadata.snappingTriggerPercentage = widget.snappingTriggerPercentage;
+      _metadata!.snappingTriggerPercentage = widget.snappingTriggerPercentage;
     }
 
     if (oldWidget.duration != widget.duration) {
-      _controller._updateDurations();
+      _controller!._updateDurations();
       widget?.panelController?._updateDurations();
     }
 
     if (oldWidget.dragMultiplier != widget.dragMultiplier) {
-      _metadata.dragMultiplier = widget.dragMultiplier._safeClamp(1.0, 5.0);
+      _metadata!.dragMultiplier = widget.dragMultiplier._safeClamp(1.0, 5.0) as double;
     }
 
     if (oldWidget.isTwoStatePanel != widget.isTwoStatePanel) {
-      if ((widget.isTwoStatePanel) && (_metadata.isCollapsed)) {
-        _controller.expand();
+      if ((widget.isTwoStatePanel) && (_metadata!.isCollapsed)) {
+        _controller!.expand();
       }
-      _metadata.isTwoStatePanel = widget.isTwoStatePanel;
+      _metadata!.isTwoStatePanel = widget.isTwoStatePanel;
     }
 
     if ((!autoSizing.headerSizeIsClosed) &&
@@ -722,89 +722,89 @@ class _SlidingPanelState extends State<SlidingPanel>
         (!autoSizing.autoSizeExpanded)) {
       // no auto sizing is applied
       if (oldWidget.size.closedHeight != size.closedHeight) {
-        if (_metadata.currentHeight < size.closedHeight) {
+        if (_metadata!.currentHeight < size.closedHeight) {
           // if current height of panel is less than new height
           // animate then set
 
-          _controller.setAnimatedPanelPosition(size.closedHeight).then((_) {
-            _metadata.closedHeight = size.closedHeight;
+          _controller!.setAnimatedPanelPosition(size.closedHeight).then((_) {
+            _metadata!.closedHeight = size.closedHeight;
           });
-        } else if ((_metadata.currentHeight > size.closedHeight) &&
-            (_metadata.isClosed)) {
+        } else if ((_metadata!.currentHeight > size.closedHeight) &&
+            (_metadata!.isClosed)) {
           // if current height of panel is more than new height and panel is closed
           // set then animate
 
-          _metadata.closedHeight = size.closedHeight;
-          _controller.setAnimatedPanelPosition(size.closedHeight);
+          _metadata!.closedHeight = size.closedHeight;
+          _controller!.setAnimatedPanelPosition(size.closedHeight);
         } else {
           // just close the panel and set new value
           // set then animate
 
-          _metadata.closedHeight = size.closedHeight;
-          if ((!_metadata.isExpanded) && (!_metadata.isCollapsed)) {
+          _metadata!.closedHeight = size.closedHeight;
+          if ((!_metadata!.isExpanded) && (!_metadata!.isCollapsed)) {
             // if panel is neither collapsed nor expanded
-            _controller.setAnimatedPanelPosition(size.closedHeight);
+            _controller!.setAnimatedPanelPosition(size.closedHeight);
           }
         }
       }
 
       if (oldWidget.size.collapsedHeight != size.collapsedHeight) {
-        if ((_metadata.currentHeight < size.collapsedHeight) &&
-            (!_metadata.isClosed)) {
+        if ((_metadata!.currentHeight < size.collapsedHeight) &&
+            (!_metadata!.isClosed)) {
           // if current height of panel is less than new height and panel is not closed
           // animate then set
 
-          _controller.setAnimatedPanelPosition(size.collapsedHeight).then((_) {
-            _metadata.collapsedHeight = size.collapsedHeight;
+          _controller!.setAnimatedPanelPosition(size.collapsedHeight).then((_) {
+            _metadata!.collapsedHeight = size.collapsedHeight;
           });
-        } else if ((_metadata.currentHeight > size.collapsedHeight) &&
-            (_metadata.isCollapsed)) {
+        } else if ((_metadata!.currentHeight > size.collapsedHeight) &&
+            (_metadata!.isCollapsed)) {
           // if current height of panel is more than new height and panel is collapsed
           // set then animate
 
-          _metadata.collapsedHeight = size.collapsedHeight;
-          _controller.setAnimatedPanelPosition(size.collapsedHeight);
+          _metadata!.collapsedHeight = size.collapsedHeight;
+          _controller!.setAnimatedPanelPosition(size.collapsedHeight);
         } else {
           // set new value
-          _metadata.collapsedHeight = size.collapsedHeight;
-          if ((!_metadata.isExpanded) && (!_metadata.isClosed)) {
+          _metadata!.collapsedHeight = size.collapsedHeight;
+          if ((!_metadata!.isExpanded) && (!_metadata!.isClosed)) {
             // if panel is neither closed nor expanded
-            _controller.setAnimatedPanelPosition(size.collapsedHeight);
+            _controller!.setAnimatedPanelPosition(size.collapsedHeight);
           }
         }
       }
 
       if (oldWidget.size.expandedHeight != size.expandedHeight) {
-        if ((_metadata.currentHeight < size.expandedHeight) &&
-            _metadata.isExpanded) {
+        if ((_metadata!.currentHeight < size.expandedHeight) &&
+            _metadata!.isExpanded) {
           // if current height of panel is less than new height and panel is expanded
           // set then animate
 
-          _metadata.expandedHeight = size.expandedHeight;
-          _controller.setAnimatedPanelPosition(size.expandedHeight);
+          _metadata!.expandedHeight = size.expandedHeight;
+          _controller!.setAnimatedPanelPosition(size.expandedHeight);
           _paddingApplyNeeded = true;
-        } else if (_metadata.currentHeight > size.expandedHeight) {
+        } else if (_metadata!.currentHeight > size.expandedHeight) {
           // if current height of panel is more than new height
           // animate then set
 
-          _controller.setAnimatedPanelPosition(size.expandedHeight).then((_) {
-            _metadata.expandedHeight = size.expandedHeight;
+          _controller!.setAnimatedPanelPosition(size.expandedHeight).then((_) {
+            _metadata!.expandedHeight = size.expandedHeight;
             _paddingApplyNeeded = true;
           });
         } else {
           // set new value
-          _metadata.expandedHeight = size.expandedHeight;
+          _metadata!.expandedHeight = size.expandedHeight;
           _paddingApplyNeeded = true;
-          if ((!_metadata.isCollapsed) && (!_metadata.isClosed)) {
+          if ((!_metadata!.isCollapsed) && (!_metadata!.isClosed)) {
             // if panel is neither closed nor collapsed
-            _controller.setAnimatedPanelPosition(size.expandedHeight);
+            _controller!.setAnimatedPanelPosition(size.expandedHeight);
           }
         }
       }
     }
 
     // when something changes, calculate durations again
-    _controller._updateDurations();
+    _controller!._updateDurations();
     widget?.panelController?._updateDurations();
   }
 
@@ -825,36 +825,36 @@ class _SlidingPanelState extends State<SlidingPanel>
             child: Container(
               key: _keyHeader,
               decoration: BoxDecoration(
-                border: header.decoration.border,
-                borderRadius: header.decoration.borderRadius,
-                color: header.decoration.backgroundColor ??
+                border: header.decoration!.border,
+                borderRadius: header.decoration!.borderRadius,
+                color: header.decoration!.backgroundColor ??
                     Theme.of(context).canvasColor,
-                gradient: header.decoration.gradient,
-                image: header.decoration.image,
-                backgroundBlendMode: header.decoration.backgroundBlendMode,
+                gradient: header.decoration!.gradient,
+                image: header.decoration!.image,
+                backgroundBlendMode: header.decoration!.backgroundBlendMode,
               ),
-//              padding: header.decoration.padding,
+//              padding: header.decoration!.padding,
               padding: EdgeInsets.only(
                 top: ((header?.decoration?.padding?.top ?? 0) +
-                    (header.options.primary
+                    (header.options!.primary
                         ? MediaQuery.of(context).padding.top
                         : 0)),
                 bottom: header?.decoration?.padding?.bottom ?? 0,
                 left: header?.decoration?.padding?.left ?? 0,
                 right: header?.decoration?.padding?.right ?? 0,
               ),
-              margin: header.decoration.margin,
+              margin: header.decoration!.margin,
               child: header.headerContent,
             ),
           ),
         ),
-        shape: (header.decoration.borderRadius != null)
+        shape: (header.decoration!.borderRadius != null)
             ? RoundedRectangleBorder(
-                borderRadius: header.decoration.borderRadius)
+                borderRadius: header.decoration!.borderRadius!)
             : null,
         titleSpacing: 0,
         backgroundColor:
-            header.decoration.backgroundColor ?? Theme.of(context).canvasColor,
+            header.decoration!.backgroundColor ?? Theme.of(context).canvasColor,
         iconTheme: IconThemeData(color: _appBarIconsColor),
         automaticallyImplyLeading: false,
         toolbarHeight: _calculatedHeaderHeight,
@@ -865,22 +865,22 @@ class _SlidingPanelState extends State<SlidingPanel>
         expandedHeight: null,
         //
         primary: false, // Handled in Padding
-        centerTitle: header.options.centerTitle,
-        elevation: header.options.elevation,
-        forceElevated: header.options.forceElevated,
-        pinned: header.options.alwaysOnTop,
-        floating: header.options.floating,
-        snap: header.options.floating,
-        leading: header.options.leading == null
+        centerTitle: header.options!.centerTitle,
+        elevation: header.options!.elevation,
+        forceElevated: header.options!.forceElevated,
+        pinned: header.options!.alwaysOnTop,
+        floating: header.options!.floating,
+        snap: header.options!.floating,
+        leading: header.options!.leading == null
             ? null
             : Padding(
                 padding: EdgeInsets.only(
-                    top: header.options.primary
+                    top: header.options!.primary
                         ? MediaQuery.of(context).padding.top
                         : 0),
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
-                  mainAxisAlignment: header.options.iconsAlignment,
+                  mainAxisAlignment: header.options!.iconsAlignment,
                   children: <Widget>[
                     Flexible(child: header?.options?.leading ?? Container())
                   ],
@@ -890,12 +890,12 @@ class _SlidingPanelState extends State<SlidingPanel>
           for (var action in header?.options?.trailing ?? [])
             Padding(
               padding: EdgeInsets.only(
-                  top: header.options.primary
+                  top: header.options!.primary
                       ? MediaQuery.of(context).padding.top
                       : 0),
               child: Column(
                 mainAxisSize: MainAxisSize.min,
-                mainAxisAlignment: header.options.iconsAlignment,
+                mainAxisAlignment: header.options!.iconsAlignment,
                 children: <Widget>[Flexible(child: action)],
               ),
             ),
@@ -905,15 +905,15 @@ class _SlidingPanelState extends State<SlidingPanel>
   Widget get _collapsedWidget {
     double collapsedHeight = 0.0;
     if (collapsed.hideInExpandedOnly)
-      collapsedHeight = _metadata.collapsedHeight * _metadata.constrainedHeight;
+      collapsedHeight = _metadata!.collapsedHeight * _metadata!.constrainedHeight!;
     else
-      collapsedHeight = _metadata.closedHeight * _metadata.constrainedHeight;
+      collapsedHeight = _metadata!.closedHeight * _metadata!.constrainedHeight!;
 
     return Positioned(
       top: _calculatedHeaderHeight,
-      width: (_metadata.constrainedWidth - leftPadding - rightPadding) -
-          (decoration.margin == null ? 0 : decoration.margin.horizontal) -
-          (decoration.padding == null ? 0 : decoration.padding.horizontal),
+      width: (_metadata!.constrainedWidth! - leftPadding - rightPadding) -
+          (decoration.margin == null ? 0 : decoration.margin!.horizontal) -
+          (decoration.padding == null ? 0 : decoration.padding!.horizontal),
       child: Container(
         child: GestureDetector(
           onVerticalDragUpdate: (details) => _dragPanel(
@@ -925,15 +925,15 @@ class _SlidingPanelState extends State<SlidingPanel>
             scrollContentSuper: () {},
           ),
           onVerticalDragEnd: (details) =>
-              _onPanelDragEnd(this, -details.primaryVelocity),
+              _onPanelDragEnd(this, -details.primaryVelocity!),
           child: Container(
             height: collapsedHeight,
             child: Opacity(
               opacity: _getCollapsedOpacity(this),
               child: IgnorePointer(
                 ignoring: collapsed.hideInExpandedOnly
-                    ? _metadata.isExpanded
-                    : _metadata.isCollapsed,
+                    ? _metadata!.isExpanded
+                    : _metadata!.isCollapsed,
                 child: collapsed.collapsedContent ?? Container(),
               ),
             ),
@@ -944,8 +944,8 @@ class _SlidingPanelState extends State<SlidingPanel>
   }
 
   Widget get _footerWidget {
-    double currentPixels = _metadata.currentHeight * _metadata.totalHeight;
-    double totalSubFooter = _metadata.expandedHeight * _metadata.totalHeight -
+    double currentPixels = _metadata!.currentHeight * _metadata!.totalHeight;
+    double totalSubFooter = _metadata!.expandedHeight * _metadata!.totalHeight -
         _calculatedFooterHeight;
 
     double footerHeight = max(currentPixels - totalSubFooter, 0.0);
@@ -960,20 +960,20 @@ class _SlidingPanelState extends State<SlidingPanel>
         scrollContentSuper: () {},
       ),
       onVerticalDragEnd: (details) =>
-          _onPanelDragEnd(this, -details.primaryVelocity),
+          _onPanelDragEnd(this, -details.primaryVelocity!),
       child: Container(
           decoration: BoxDecoration(
-            border: footer.decoration.border,
-            borderRadius: footer.decoration.borderRadius,
-            boxShadow: footer.decoration.boxShadows,
-            color: footer.decoration.backgroundColor ??
+            border: footer.decoration!.border,
+            borderRadius: footer.decoration!.borderRadius,
+            boxShadow: footer.decoration!.boxShadows,
+            color: footer.decoration!.backgroundColor ??
                 Theme.of(context).canvasColor,
-            gradient: footer.decoration.gradient,
-            image: footer.decoration.image,
-            backgroundBlendMode: footer.decoration.backgroundBlendMode,
+            gradient: footer.decoration!.gradient,
+            image: footer.decoration!.image,
+            backgroundBlendMode: footer.decoration!.backgroundBlendMode,
           ),
-          padding: footer.decoration.padding,
-          margin: footer.decoration.margin,
+          padding: footer.decoration!.padding,
+          margin: footer.decoration!.margin,
           height: footerHeight,
           child: footer.footerContent),
     );
@@ -985,10 +985,10 @@ class _SlidingPanelState extends State<SlidingPanel>
       children: <Widget>[
         MediaQuery.removePadding(
           context: context,
-          removeTop: _metadata.safeAreaConfig.removePaddingFromContent,
-          removeBottom: _metadata.safeAreaConfig.removePaddingFromContent,
-          removeLeft: _metadata.safeAreaConfig.removePaddingFromContent,
-          removeRight: _metadata.safeAreaConfig.removePaddingFromContent,
+          removeTop: _metadata!.safeAreaConfig!.removePaddingFromContent!,
+          removeBottom: _metadata!.safeAreaConfig.removePaddingFromContent!,
+          removeLeft: _metadata!.safeAreaConfig.removePaddingFromContent!,
+          removeRight: _metadata!.safeAreaConfig.removePaddingFromContent!,
           child: Material(
             type: MaterialType.transparency,
             child: CustomScrollView(
@@ -1018,7 +1018,7 @@ class _SlidingPanelState extends State<SlidingPanel>
         ),
 
         // collapsedContent
-        if (!_metadata.isTwoStatePanel) _collapsedWidget,
+        if (!_metadata!.isTwoStatePanel) _collapsedWidget,
 
         // footer
         if (footer.footerContent != null) _footerWidget,
@@ -1029,10 +1029,10 @@ class _SlidingPanelState extends State<SlidingPanel>
   Widget get _offStagedFooter => Offstage(
         child: Container(
           key: _keyFooter,
-          margin: footer.decoration.margin,
-          padding: footer.decoration.padding,
+          margin: footer.decoration!.margin,
+          padding: footer.decoration!.padding,
           decoration: BoxDecoration(
-            border: footer.decoration.border,
+            border: footer.decoration!.border,
           ),
           child: Container(
             child: footer.footerContent,
@@ -1074,13 +1074,13 @@ class _SlidingPanelState extends State<SlidingPanel>
           scrollContentSuper: () {},
         ),
         onVerticalDragEnd: (details) =>
-            _onPanelDragEnd(this, -details.primaryVelocity),
+            _onPanelDragEnd(this, -details.primaryVelocity!),
         onTap: () => _handleBackdropTap(this),
         child: Opacity(
           opacity: _getBackdropOpacityAmount(this),
           child: Container(
-            height: _metadata.constrainedHeight + topPadding + bottomPadding,
-            width: _metadata.constrainedWidth,
+            height: _metadata!.constrainedHeight! + topPadding + bottomPadding,
+            width: _metadata!.constrainedWidth,
             // setting color null enables Gesture recognition when collapsed / closed
             color: _getBackdropColor(this),
           ),
@@ -1095,12 +1095,12 @@ class _SlidingPanelState extends State<SlidingPanel>
         ),
         padding: decoration.padding,
         margin: decoration.margin,
-        height: _metadata.currentHeight * _metadata.constrainedHeight,
+        height: _metadata!.currentHeight * _metadata!.constrainedHeight!,
         decoration: widget.renderPanelBackground
             ? BoxDecoration(
                 border: decoration.border,
                 borderRadius: decoration.borderRadius,
-                boxShadow: _metadata.currentHeight > 0.0
+                boxShadow: _metadata!.currentHeight > 0.0
                     ? decoration.boxShadows
                     : null,
                 color:
@@ -1125,7 +1125,7 @@ class _SlidingPanelState extends State<SlidingPanel>
         Container(child: _offStagedContent),
         // needed becuase of sliver
 
-        if ((!_metadata.isTwoStatePanel) &&
+        if ((!_metadata!.isTwoStatePanel) &&
             (collapsed.collapsedContent != null))
           _offStagedCollapsed,
         // needed as we change collapsedWidget's height
@@ -1134,7 +1134,7 @@ class _SlidingPanelState extends State<SlidingPanel>
         if (widget.content.bodyContent != null)
           Positioned.fill(
               top: _getParallaxSlideAmount(this),
-              child: widget.content.bodyContent),
+              child: widget.content.bodyContent!),
 
         if (widget.backdropConfig.enabled) _backdropShadow else Container(),
 
@@ -1154,21 +1154,21 @@ class _SlidingPanelState extends State<SlidingPanel>
       onWillPop: () => _decidePop(this),
       child: LayoutBuilder(
         builder: (context, BoxConstraints constraints) {
-          _metadata.totalHeight =
-              _metadata.expandedHeight * constraints.biggest.height;
+          _metadata!.totalHeight =
+              _metadata!.expandedHeight * constraints.biggest.height;
 
-          _metadata.constrainedHeight = constraints.biggest.height - topPadding;
-          _metadata.constrainedWidth = constraints.biggest.width;
+          _metadata!.constrainedHeight = constraints.biggest.height - topPadding;
+          _metadata!.constrainedWidth = constraints.biggest.width;
 
           maxWidthPortrait = min(
-              _metadata.constrainedWidth - leftPadding - rightPadding,
+              _metadata!.constrainedWidth !- leftPadding - rightPadding,
               widget.maxWidth.portrait);
           maxWidthLandscape = min(
-              _metadata.constrainedWidth - leftPadding - rightPadding,
+              _metadata!.constrainedWidth !- leftPadding - rightPadding,
               widget.maxWidth.landscape);
 
           // Subtract bottomPadding from height, if this is not a modal panel
-          _metadata.constrainedHeight -= isModal ? 0 : bottomPadding;
+          _metadata!.constrainedHeight =  _metadata!.constrainedHeight! - (isModal ? 0 : bottomPadding);
 
           if (_paddingApplyNeeded) {
             _paddingApplyNeeded = false;
